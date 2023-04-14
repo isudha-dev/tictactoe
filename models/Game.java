@@ -1,6 +1,7 @@
 package lld.projects.tictactoe.models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import lld.projects.tictactoe.exception.InvalidGameConstructionParametersException;
 import lld.projects.tictactoe.strategy.GameWinningStrategy.GameWinningStrategy;
@@ -88,7 +89,25 @@ public class Game {
                 throw new InvalidGameConstructionParametersException("No. of players should be one less than game dimension");
             }
             // TODO: validate no 2 player with same char
+            HashSet<Character> symbolSet = new HashSet<>();
+            for(Player pl : players){
+                symbolSet.add(pl.getSymbol());
+            }
+            if(symbolSet.size() < dimension){
+                throw new InvalidGameConstructionParametersException("Players can not select same symbols");
+            }
+
             // TODO: validate only 1 bot player
+            int count = 0;
+            for(Player pl : players){
+                if(pl.getPlayerType() == PlayerType.BOT){
+                    count++;
+                }
+            }
+            if(count > 1){
+                throw new InvalidGameConstructionParametersException("We can have only 1 bot in game");
+            }
+
             return true;
         }
 
