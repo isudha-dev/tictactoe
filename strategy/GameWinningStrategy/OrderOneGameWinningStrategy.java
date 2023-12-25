@@ -12,12 +12,25 @@ public class OrderOneGameWinningStrategy implements GameWinningStrategy {
 
     List<HashMap<Character, Integer>> rows = new ArrayList<>();
     List<HashMap<Character, Integer>> cols = new ArrayList<>();
-    List<HashMap<Character, Integer>> diag1 = new ArrayList<>();
-    List<HashMap<Character, Integer>> diag2 = new ArrayList<>();
+    HashMap<Character, Integer> diag1 = new HashMap<>(); // left to right
+    HashMap<Character, Integer> diag2 = new HashMap<>(); // right to left
 
     public OrderOneGameWinningStrategy(int dimension){
         this.dimension = dimension;
+        for(int i = 0; i < dimension; i++){
+            rows.add(new HashMap<>());
+            cols.add(new HashMap<>());
+        }
     }
+
+    private boolean isLeftToRightDiagonal(int row, int col){
+        return row == col;
+    }
+
+    private boolean isRightToLeftDiagonal(int row, int col){
+        return row+col == dimension-1;
+    }
+
     @Override public boolean checkWinner(final Board board, final Player lastPlayedPlayer, final Cell lastPlayedMove) {
         // TODO: implement this
 
@@ -27,21 +40,22 @@ public class OrderOneGameWinningStrategy implements GameWinningStrategy {
 
         rows.get(row).put(ch, rows.get(row).getOrDefault(ch, 0) + 1);
         cols.get(col).put(ch, cols.get(col).getOrDefault(ch, 0) + 1);
-        if(row == col)
-            diag1.get(row).put(ch, diag1.get(row).getOrDefault(ch, 0) + 1);
-        if(row+col == dimension)
-            diag2.get(row).put(ch, diag2.get(row).getOrDefault(ch, 0) + 1);
 
-        if(rows.get(row).get(ch) == dimension){
+        if(isLeftToRightDiagonal(row, col)){
+            diag1.put(ch, diag1.getOrDefault(ch, 0)+1);
+        }
+
+        if(isRightToLeftDiagonal(row, col)){
+            diag2.put(ch, diag2.getOrDefault(ch, 0)+1);
+        }
+
+        if((rows.get(row).get(lastPlayedPlayer.getSymbol()) == dimension) || cols.get(col).get(lastPlayedPlayer.getSymbol()) == dimension) {
             return true;
         }
-        if(cols.get(col).get(ch) == dimension){
+        if(isLeftToRightDiagonal(row, col) && diag1.get(lastPlayedPlayer.getSymbol()) == dimension) {
             return true;
         }
-        if(diag1.get(row).get(ch) == dimension){
-            return true;
-        }
-        if(diag2.get(row).get(ch) == dimension){
+        if(isRightToLeftDiagonal(row, col) && diag2.get(lastPlayedPlayer.getSymbol()) == dimension) {
             return true;
         }
 

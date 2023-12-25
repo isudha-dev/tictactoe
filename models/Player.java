@@ -13,13 +13,13 @@ public class Player {
         this.playerType = playerType;
     }
 
-    public Move decideMove(){
+    public Move decideMove(Board board){
         Scanner sc = new Scanner(System.in);
         System.out.println("Please tell the row");
         int row = sc.nextInt();
         System.out.println("Please tell the col");
         int col = sc.nextInt();
-        return new Move(this, new Cell(row, col));
+        return new Move(this, new Cell(--row, --col));
     }
 
     public String getName() {

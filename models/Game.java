@@ -67,7 +67,7 @@ public class Game {
         return new Builder();
     }
 
-    private static class Builder {
+    public static class Builder {
         private int dimension;
         private List<Player> players;
 
@@ -88,16 +88,17 @@ public class Game {
             if (this.players.size() != dimension-1){
                 throw new InvalidGameConstructionParametersException("No. of players should be one less than game dimension");
             }
-            // TODO: validate no 2 player with same char
+
+            // validate no 2 player with same char
             HashSet<Character> symbolSet = new HashSet<>();
             for(Player pl : players){
                 symbolSet.add(pl.getSymbol());
             }
-            if(symbolSet.size() < dimension){
+            if(symbolSet.size() < dimension - 1){
                 throw new InvalidGameConstructionParametersException("Players can not select same symbols");
             }
 
-            // TODO: validate only 1 bot player
+            // validate only 1 bot player
             int count = 0;
             for(Player pl : players){
                 if(pl.getPlayerType() == PlayerType.BOT){
@@ -128,6 +129,45 @@ public class Game {
             return game;
         }
     }
+
+    // TODO: implement undo
+    public void undo() {
+
+    }
+
+    public void makeNextMove() {
+        Player toMovePlayers = players.get(nextPlayerIndex);
+        System.out.println("It is "+toMovePlayers.getName()+"'s move.");
+
+        Move move = toMovePlayers.decideMove(board);
+        int row = move.getCell().getRow();
+        int col = move.getCell().getCol();
+        System.out.println("Move happened at: " + row + ", " + col + ".");
+
+        Cell cell = board.getBoard().get(row).get(col);
+
+        board.getBoard().get(row).get(col).setCellState(CellState.FILLED);
+        board.getBoard().get(row).get(col).setPlayer(toMovePlayers);
+
+        Move finalMove = new Move(toMovePlayers, board.getBoard().get(row).get(col));
+        this.moves.add(finalMove);
+
+        if(gameWinningStrategy.checkWinner(board, toMovePlayers, finalMove.getCell())){
+            gameStatus = GameStatus.WON;
+            winner = toMovePlayers;
+        }
+
+        nextPlayerIndex++;
+        nextPlayerIndex %=players.size();
+    }
+
+    public void displayBoard(){
+        board.display();
+    }
+
+
+
+
 
 
 }

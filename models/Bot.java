@@ -13,7 +13,8 @@ public class Bot extends Player{
         this.botPlayingStrategy = botPlayingStrategy;
     }
 
-    public Move decideMove(){
-        return botPlayingStrategy.decideMove(this);
+    @Override
+    public Move decideMove(Board board){
+        return botPlayingStrategy.decideMove(board,this);
     }
 }
